@@ -10,7 +10,6 @@ buildscript {
         google()
     }
     dependencies {
-        
 
     }
 }
@@ -47,7 +46,6 @@ project(":desktop") {
         api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
-        
     }
 }
 
@@ -59,6 +57,7 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
-        
+        implementation 'org.junit.jupiter:junit-jupiter-api:5.5.1'
+        runtime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.5.0'
     }
 }

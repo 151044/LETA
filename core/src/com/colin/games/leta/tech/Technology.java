@@ -19,7 +19,7 @@ public abstract class Technology {
         if(currentProgress == neededTime){
             isDone = true;
         }else if(currentProgress > neededTime){
-            throw new IllegalStateException("Technology incremented when done?");
+            throw new IllegalStateException("Technology " + name + " incremented when done?");
         }
     }
     public boolean isResearched(){
@@ -30,4 +30,5 @@ public abstract class Technology {
         return name;
     }
     public abstract List<Technology> requires();
+    public abstract List<Technology> conflicts();
 }
