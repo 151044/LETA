@@ -1,6 +1,8 @@
 package com.colin.games.leta.tech;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class Technology {
     protected int neededTime;
@@ -30,5 +32,20 @@ public abstract class Technology {
         return name;
     }
     public abstract List<Technology> requires();
-    public abstract List<Technology> conflicts();
+    public List<Technology> conflicts(){
+        return Collections.emptyList();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Technology that = (Technology) o;
+        return name.equals(that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
 }

@@ -1,7 +1,6 @@
 package com.colin.games.leta.tech;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TechTree {
@@ -13,13 +12,18 @@ public class TechTree {
         return null;
     }
     public List<String> dump(){
-        return recurse(top).stream().map(tech -> tech.toString()).collect(Collectors.toList());
+        return allNodes().stream().map(tech -> tech.desc()).collect(Collectors.toList());
+    }
+    private Set<Node> allNodes(){
+        return new HashSet<>(recurse(top));
     }
     private List<Node> recurse(Node toRecurse){
-        if(toRecurse.get().requires().size() == 0){
+        if(toRecurse.connects.size() == 0){
             return List.of(toRecurse);
         }else{
-            return toRecurse.connects.stream().flatMap(tech -> recurse(tech).stream()).collect(Collectors.toList());
+            List<Node> nodes = toRecurse.connects.stream().flatMap(tech -> recurse(tech).stream()).collect(Collectors.toList());
+            nodes.add(toRecurse);
+            return nodes;
         }
     }
     private class Node{
@@ -41,7 +45,23 @@ public class TechTree {
         }
         @Override
         public String toString(){
-            return thisTech.getName() + " is a dependency of " + connects.stream().map(node -> node.get().getName()).collect(Collectors.joining(", ")) + ".";
+            return thisTech.name;
+        }
+        public String desc(){
+            return thisTech.getName() + " is a dependency of " + (connects.isEmpty() ? "nothing." : connects.stream().map(node -> node.get().getName()).collect(Collectors.joining(", ")) + ".");
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Node node = (Node) o;
+            return thisTech.equals(node.thisTech);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(thisTech);
         }
     }
 }
