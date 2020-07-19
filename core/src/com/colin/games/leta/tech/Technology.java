@@ -1,5 +1,7 @@
 package com.colin.games.leta.tech;
 
+import java.util.List;
+
 public abstract class Technology {
     protected int neededTime;
     protected int currentProgress = 0;
@@ -24,4 +26,8 @@ public abstract class Technology {
         return isDone;
     }
     public abstract void onDone();
+    public String getName(){
+        return name;
+    }
+    public abstract List<Technology> requires();
 }
