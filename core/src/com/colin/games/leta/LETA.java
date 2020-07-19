@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.awt.*;
+
 public class LETA extends Game {
 	private OrthographicCamera camera;
 	private BitmapFont font;
