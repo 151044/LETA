@@ -17,7 +17,7 @@ public class Sailing extends Technology {
 
     @Override
     public List<Technology> requires() {
-        return List.of(Technologies.getTech("Forestry"));
+        return List.of(Technologies.getTech("Forestry"),Technologies.getTech("Exploring"));
     }
 
     @Override

@@ -9,7 +9,10 @@ public class TechTree {
         top = new Node(root,techs);
     }
     public List<Technology> dependents(Technology toSearch){
-        return null;
+        return allNodes().stream().filter(n -> n.get().equals(toSearch)).findFirst().orElseThrow(() -> new NoSuchElementException("Technology " + toSearch.getName() + " does not exist in this tech tree!")).connects.stream().map(Node::get).collect(Collectors.toList());
+    }
+    public List<Technology> dependencies(Technology toSearch){
+        return allNodes().stream().filter(n -> n.connects.stream().anyMatch(node -> node.get().equals(toSearch))).map(Node::get).collect(Collectors.toList());
     }
     public List<String> dump(){
         return allNodes().stream().map(tech -> tech.desc()).collect(Collectors.toList());
@@ -18,7 +21,7 @@ public class TechTree {
         return new HashSet<>(recurse(top));
     }
     private List<Node> recurse(Node toRecurse){
-        if(toRecurse.connects.size() == 0){
+        if(toRecurse.connects.isEmpty()){
             return List.of(toRecurse);
         }else{
             List<Node> nodes = toRecurse.connects.stream().flatMap(tech -> recurse(tech).stream()).collect(Collectors.toList());
