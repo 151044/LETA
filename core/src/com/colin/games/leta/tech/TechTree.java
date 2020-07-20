@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 public class TechTree {
     private Node top;
     public TechTree(Technology root,List<Technology> techs){
-        top = new Node(root,techs);
+        top = new Node(root, techs);
     }
     public List<Technology> dependents(Technology toSearch){
         return allNodes().stream().filter(n -> n.get().equals(toSearch)).findFirst().orElseThrow(() -> new NoSuchElementException("Technology " + toSearch.getName() + " does not exist in this tech tree!")).connects.stream().map(Node::get).collect(Collectors.toList());
@@ -15,7 +15,7 @@ public class TechTree {
         return allNodes().stream().filter(n -> n.connects.stream().anyMatch(node -> node.get().equals(toSearch))).map(Node::get).collect(Collectors.toList());
     }
     public List<String> dump(){
-        return allNodes().stream().map(tech -> tech.desc()).collect(Collectors.toList());
+        return allNodes().stream().map(Node::desc).collect(Collectors.toList());
     }
     private Set<Node> allNodes(){
         return new HashSet<>(recurse(top));
@@ -29,19 +29,19 @@ public class TechTree {
             return nodes;
         }
     }
-    private class Node{
+    private static class Node{
         private List<Node> connects = new ArrayList<>();
         private Technology thisTech;
         public Node(Technology toSet,List<Technology> all){
             thisTech = toSet;
             for(Technology tech : all){
                 if(tech.requires().contains(toSet)){
-                    connects.add(new Node(tech,all));
+                    connects.add(new Node(tech, all));
                 }
             }
         }
         public List<Technology> dependents(){
-            return connects.stream().map(node -> node.get()).collect(Collectors.toList());
+            return connects.stream().map(Node::get).collect(Collectors.toList());
         }
         public Technology get(){
             return thisTech;
