@@ -5,17 +5,19 @@ import java.util.stream.Collectors;
 
 public class TechTree {
     private Node top;
+    private Set<Node> cache = new HashSet<>();
     public TechTree(Technology root,List<Technology> techs){
         top = new Node(root, techs);
+        buildCache();
     }
     public List<Technology> dependents(Technology toSearch){
-        return allNodes().stream().filter(n -> n.get().equals(toSearch)).findFirst().orElseThrow(() -> new NoSuchElementException("Technology " + toSearch.getName() + " does not exist in this tech tree!")).connects.stream().map(Node::get).collect(Collectors.toList());
+        return cache.stream().filter(n -> n.get().equals(toSearch)).findFirst().orElseThrow(() -> new NoSuchElementException("Technology " + toSearch.getName() + " does not exist in this tech tree!")).connects.stream().map(Node::get).collect(Collectors.toList());
     }
     public List<Technology> dependencies(Technology toSearch){
-        return allNodes().stream().filter(n -> n.connects.stream().anyMatch(node -> node.get().equals(toSearch))).map(Node::get).collect(Collectors.toList());
+        return cache.stream().filter(n -> n.connects.stream().anyMatch(node -> node.get().equals(toSearch))).map(Node::get).collect(Collectors.toList());
     }
     public List<String> dump(){
-        return allNodes().stream().map(Node::desc).collect(Collectors.toList());
+        return cache.stream().map(Node::desc).collect(Collectors.toList());
     }
     private Set<Node> allNodes(){
         return new HashSet<>(recurse(top));
@@ -28,6 +30,9 @@ public class TechTree {
             nodes.add(toRecurse);
             return nodes;
         }
+    }
+    private void buildCache(){
+        cache = allNodes();
     }
     private static class Node{
         private List<Node> connects = new ArrayList<>();
