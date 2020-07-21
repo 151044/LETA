@@ -1,11 +1,13 @@
 package com.colin.games.leta.tech;
 
 import java.util.*;
+import java.util.concurrent.Semaphore;
 import java.util.stream.Collectors;
 
 public class TechTree {
     private Node top;
     private Set<Node> cache = new HashSet<>();
+    private Semaphore sem = new Semaphore(1);
     public TechTree(Technology root,List<Technology> techs){
         top = new Node(root, techs);
         buildCache();
@@ -16,8 +18,18 @@ public class TechTree {
     public List<Technology> dependencies(Technology toSearch){
         return cache.stream().filter(n -> n.connects.stream().anyMatch(node -> node.get().equals(toSearch))).map(Node::get).collect(Collectors.toList());
     }
+    public void addTech(Technology toAdd, List<Technology> dependencies,List<Technology> all){
+        Node toInsert = new Node(toAdd,all);
+        cache.stream().filter(n -> dependencies.contains(n.get())).forEach(n -> n.connects.add(toInsert));
+        /*Should be resolved by new Node()?
+        cache.stream().filter(n -> dependents.contains(n.get())).forEach(n -> toInsert.connects.add(n));*/
+        buildCache();
+    }
     public List<String> dump(){
         return cache.stream().map(Node::desc).collect(Collectors.toList());
+    }
+    private Node getByTech(Technology tech){
+        return cache.stream().filter(n -> !n.get().equals(tech)).findFirst().orElseThrow(() -> new NoSuchElementException("Technology " + tech.getName() + " does not exist in this tech tree!"));
     }
     private Set<Node> allNodes(){
         return new HashSet<>(recurse(top));
@@ -32,7 +44,9 @@ public class TechTree {
         }
     }
     private void buildCache(){
+        sem.acquireUninterruptibly();
         cache = allNodes();
+        sem.release();
     }
     private static class Node{
         private List<Node> connects = new ArrayList<>();
@@ -44,9 +58,6 @@ public class TechTree {
                     connects.add(new Node(tech, all));
                 }
             }
-        }
-        public List<Technology> dependents(){
-            return connects.stream().map(Node::get).collect(Collectors.toList());
         }
         public Technology get(){
             return thisTech;
