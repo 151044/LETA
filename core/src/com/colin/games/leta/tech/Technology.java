@@ -24,6 +24,12 @@ public abstract class Technology {
             throw new IllegalStateException("Technology " + name + " incremented when done?");
         }
     }
+    public void addProgress(int toAdd){
+        currentProgress += toAdd;
+        if(neededTime < currentProgress){
+            isDone = true;
+        }
+    }
     public boolean isResearched(){
         return isDone;
     }
